@@ -20,6 +20,8 @@ type UrlStoredObject struct {
 
 type UrlStoredObjectSet []UrlStoredObject
 
+var filename string = "./url_mappings.json"
+
 func generateTinyUrl(w http.ResponseWriter, r *http.Request) {
 	var urlObject UrlObject
 	reqBody, _ := ioutil.ReadAll(r.Body)
@@ -36,7 +38,7 @@ func generateTinyUrl(w http.ResponseWriter, r *http.Request) {
 }
 
 func createHashForUrl(url string) string {
-	urlStoredObject := ReadFromFIle()
+	urlStoredObject := ReadFromFIle(filename)
 
 	// check if current url exists
 	for _, urlObj := range urlStoredObject {
@@ -54,16 +56,6 @@ func createHashForUrl(url string) string {
 	ioutil.WriteFile("./url_mappings.json", []byte(modData), 066)
 
 	return urlHashString
-}
-
-func (u UrlStoredObjectSet) toString() string {
-	raw := "["
-
-	for _, url := range u {
-		raw = raw + `{"url":"` + url.Url + `","tiny":"` + url.Tiny + `"},`
-	}
-
-	return raw
 }
 
 func generateNormalUrl(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +78,7 @@ func generateNormalUrl(w http.ResponseWriter, r *http.Request) {
 }
 
 func getNormalUrlFromFIle(tiny string) string {
-	urlStoredObject := ReadFromFIle()
+	urlStoredObject := ReadFromFIle(filename)
 
 	for _, url := range urlStoredObject {
 		if url.Tiny == tiny {
@@ -95,17 +87,4 @@ func getNormalUrlFromFIle(tiny string) string {
 	}
 
 	return ""
-}
-
-func ReadFromFIle() UrlStoredObjectSet {
-	hash, _ := ioutil.ReadFile("./url_mappings.json")
-	var urlStoredObject UrlStoredObjectSet
-
-	err := json.Unmarshal(hash, &urlStoredObject)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return urlStoredObject
 }
