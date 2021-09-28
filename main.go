@@ -15,6 +15,7 @@ func handleRequests() {
 	// create a new endpoint route
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/tinyurl", generateTinyUrl).Methods("POST")
+	myRouter.HandleFunc("/normalurl", generateNormalUrl).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
