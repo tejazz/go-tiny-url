@@ -77,7 +77,8 @@ func generateNormalUrl(w http.ResponseWriter, r *http.Request) {
 func getNormalUrlFromFIle(tinyUrl string) string {
 	storedUrlMappings := ReadFromFIle(filename)
 
-	tinyHash := strings.Split(tinyUrl, "/")[len(strings.Split(tinyUrl, "/")) - 1]
+	splitUrl := strings.Split(tinyUrl, "/")
+	tinyHash := splitUrl[len(splitUrl) - 1]
 
 	for url, tiny := range storedUrlMappings {
 		if tinyHash == tiny {
