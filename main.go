@@ -10,14 +10,14 @@ import (
 
 func handleRequests() {
 	// create a new instance of a mux router
-	myRouter := mux.NewRouter().StrictSlash(true)
+	r := mux.NewRouter().StrictSlash(true)
 
 	// create a new endpoint route
-	myRouter.HandleFunc("/", homePage)
-	myRouter.HandleFunc("/tinyurl", generateTinyUrl).Methods("POST")
-	myRouter.HandleFunc("/normalurl", generateNormalUrl).Methods("POST")
+	r.HandleFunc("/", homePage)
+	r.HandleFunc("/tinyurl", getTinyUrl).Methods("POST")
+	r.HandleFunc("/normalurl", generateNormalUrl).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(":8080", myRouter))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
 func main() {

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type UrlObject struct {
@@ -18,11 +19,9 @@ type UrlStoredObject struct {
 	Tiny string
 }
 
-type UrlStoredObjectSet []UrlStoredObject
-
 var filename string = "./url_mappings.json"
 
-func generateTinyUrl(w http.ResponseWriter, r *http.Request) {
+func getTinyUrl(w http.ResponseWriter, r *http.Request) {
 	var urlObject UrlObject
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
@@ -38,13 +37,11 @@ func generateTinyUrl(w http.ResponseWriter, r *http.Request) {
 }
 
 func createHashForUrl(url string) string {
-	urlStoredObject := ReadFromFIle(filename)
+	storedUrlMappings := ReadFromFIle(filename)
 
 	// check if current url exists
-	for _, urlObj := range urlStoredObject {
-		if urlObj.Url == url {
-			return urlObj.Tiny
-		}
+	if _, ok:= storedUrlMappings[url]; ok {
+		return storedUrlMappings[url]
 	}
 
 	// create new mapping
@@ -52,7 +49,7 @@ func createHashForUrl(url string) string {
 	urlHashBytes := md5.Sum([]byte(url))
 	urlHashString := hex.EncodeToString(urlHashBytes[:3])
 
-	modData := urlStoredObject.toString() + `{"url":"` + url + `","tiny":"https://t.url/` + urlHashString + `"}]`
+	modData := storedUrlMappings.String() + `"` + url + `":"` + urlHashString + `"}`
 	ioutil.WriteFile("./url_mappings.json", []byte(modData), 066)
 
 	return urlHashString
@@ -77,12 +74,14 @@ func generateNormalUrl(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, normalUrl)
 }
 
-func getNormalUrlFromFIle(tiny string) string {
-	urlStoredObject := ReadFromFIle(filename)
+func getNormalUrlFromFIle(tinyUrl string) string {
+	storedUrlMappings := ReadFromFIle(filename)
 
-	for _, url := range urlStoredObject {
-		if url.Tiny == tiny {
-			return url.Url
+	tinyHash := strings.Split(tinyUrl, "/")[len(strings.Split(tinyUrl, "/")) - 1]
+
+	for url, tiny := range storedUrlMappings {
+		if tinyHash == tiny {
+			return url
 		}
 	}
 

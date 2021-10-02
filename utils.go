@@ -6,25 +6,31 @@ import (
 	"io/ioutil"
 )
 
-func (u UrlStoredObjectSet) toString() string {
-	raw := "["
+type StoredUrlMappings map[string]string
 
-	for _, url := range u {
-		raw = raw + `{"url":"` + url.Url + `","tiny":"` + url.Tiny + `"},`
+func (u StoredUrlMappings) String() string {
+	raw := "{"
+
+	for url, tiny := range u {
+		raw = raw + `"` + url + `":"` + tiny + `",`
 	}
 
 	return raw
 }
 
-func ReadFromFIle(filename string) UrlStoredObjectSet {
-	hash, _ := ioutil.ReadFile(filename)
-	var urlStoredObject UrlStoredObjectSet
+func ReadFromFIle(filename string) StoredUrlMappings {
+	hash, readErr := ioutil.ReadFile(filename)
+	var storedUrlMappings StoredUrlMappings
 
-	err := json.Unmarshal(hash, &urlStoredObject)
-
-	if err != nil {
-		fmt.Println(err)
+	if readErr != nil {
+		fmt.Println("[Func: ReadFromFIle]", readErr)
 	}
 
-	return urlStoredObject
+	err := json.Unmarshal(hash, &storedUrlMappings)
+
+	if err != nil {
+		fmt.Println("[Func: ReadFromFIle]", err)
+	}
+
+	return storedUrlMappings
 }
