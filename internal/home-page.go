@@ -1,10 +1,10 @@
-package main
+package internal
 
 import (
 	"fmt"
 	"net/http"
 )
 
-func homePage(w http.ResponseWriter, r *http.Request) {
+func HomePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "TinyURL Generator: Welcome")
 }
