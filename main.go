@@ -1,7 +1,7 @@
 package main
 
 import (
-	"create-tiny-url/internal"
+	"create-tiny-url/internal/services"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,9 +14,9 @@ func handleRequests() {
 	r := mux.NewRouter().StrictSlash(true)
 
 	// create a new endpoint route
-	r.HandleFunc("/", internal.HomePage)
-	r.HandleFunc("/tinyurl", internal.GetTinyUrl).Methods("POST")
-	r.HandleFunc("/normalurl", internal.GenerateNormalUrl).Methods("POST")
+	r.HandleFunc("/", services.HomePage)
+	r.HandleFunc("/tinyurl", services.GetTinyUrl).Methods("POST")
+	r.HandleFunc("/normalurl", services.GenerateNormalUrl).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
