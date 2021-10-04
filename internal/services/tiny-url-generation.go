@@ -21,12 +21,14 @@ func GetTinyUrl(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(reqBody, &urlObject)
 
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	tinyUrl := createHashForUrl(urlObject.Url)
 
 	fmt.Fprint(w, "https://t.url/"+tinyUrl)
+
+	defer r.Body.Close()
 }
 
 func createHashForUrl(url string) string {

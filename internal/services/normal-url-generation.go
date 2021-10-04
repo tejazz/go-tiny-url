@@ -17,16 +17,19 @@ func GenerateNormalUrl(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(reqBody, &urlObject)
 
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	normalUrl := getNormalUrlFromFIle(urlObject.Url)
 
 	if normalUrl == "" {
-		fmt.Fprintf(w, "The particular URL does not exist")
+		http.Error(w, "The particular URL does not exist", http.StatusInternalServerError)
+		return
 	}
 
 	fmt.Fprintf(w, normalUrl)
+
+	defer r.Body.Close()
 }
 
 func getNormalUrlFromFIle(tinyUrl string) string {
